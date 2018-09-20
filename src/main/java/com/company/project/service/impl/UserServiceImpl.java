@@ -1,14 +1,16 @@
 package com.company.project.service.impl;
 
-import com.company.project.dao.UserMapper;
-import com.company.project.model.User;
-import org.springframework.stereotype.Service;
-import com.company.project.service.UserService;
-import org.springframework.transaction.annotation.Transactional;
-
 import java.util.List;
 
 import javax.annotation.Resource;
+
+import org.springframework.cache.annotation.Cacheable;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import com.company.project.dao.UserMapper;
+import com.company.project.model.User;
+import com.company.project.service.UserService;
 
 
 /**
@@ -20,6 +22,8 @@ public class UserServiceImpl implements UserService {
     @Resource
     private UserMapper userMapper;
 	
+    
+     
 	@Override
 	public int deleteById(Integer id) {
 		return userMapper.deleteByPrimaryKey(id);
@@ -31,13 +35,22 @@ public class UserServiceImpl implements UserService {
 	}
 
 	@Override
+    @Cacheable(value = "user", key = "'user_'+#id")
+//	@cacheable(value = "user", key = "'user_page'")
 	public User findById(Integer id) {
+		
+		System.out.println("进入实现类获取数据！" + id);
 		return userMapper.selectByPrimaryKey(id);
 	}
 
 	@Override
+	@Cacheable(value = "user", key = "'user_page'")
 	public List<User> findAll() {
-		return userMapper.selectAll();
+		// 具体使用
+		System.out.println("the methos excuted");
+		List<User> list = userMapper.selectAll();
+		
+		return list;
 	}
 	
 	@Override
